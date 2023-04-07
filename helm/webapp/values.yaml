@@ -1,0 +1,46 @@
+deployment:
+  image: "webapp"
+  tag: "1.0.4"
+name: example-app
+
+secret:
+  name: mongo-secret
+  data:
+    user: bW9uZ291c2Vy
+    password: bW9uZ29wYXNzd29yZA==
+
+config:
+  name: mongo-config
+  data:
+    mongoUrl: mongo-service
+
+database:
+  name: mongo-deployment
+  labels:
+    app: mongo
+  containers:
+    name: mongodb
+    image: mongo:5.0
+    ports:
+      containerPort: 27017
+  service:
+    name: mongo-service
+    ports: 
+      port: 27017
+      targetPort: 27017
+
+webapp:
+  name: webapp-deployment
+  labels:
+    app: webapp
+  containers:
+    name: webapp
+    image: nanajanashia/k8s-demo-app:v1.0
+    ports:
+      containerPort: 3000
+  service:
+    name: webapp-service
+    ports:
+      port: 3000
+      targetPort: 3000
+      nodePort: 30100

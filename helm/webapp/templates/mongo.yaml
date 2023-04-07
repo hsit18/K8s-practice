@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.database.name }}
+  labels:
+    app: {{ .Values.database.labels.app }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.database.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.labels.app }}
+    spec:
+      containers:
+      - name: {{ .Values.database.containers.name }}
+        image: {{ .Values.database.containers.image }}
+        ports:
+        - containerPort: {{ .Values.database.containers.ports.containerPort }}
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.database.service.name }}
+spec:
+  selector:
+    app: {{ .Values.database.labels.app }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.database.service.ports.port }}
+      targetPort: {{ .Values.database.service.ports.targetPort }}

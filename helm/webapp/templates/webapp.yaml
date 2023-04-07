@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.webapp.name }}
+  labels:
+    app: {{ .Values.webapp.labels.app }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.webapp.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.webapp.labels.app }}
+    spec:
+      containers:
+      - name: {{ .Values.webapp.labels.app }}
+        image: {{ .Values.webapp.containers.image }}
+        ports:
+        - containerPort: {{ .Values.webapp.containers.ports.containerPort }}
+        env:
+        - name: USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: USER_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.webapp.labels.app }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.webapp.service.ports.port }}
+      targetPort: {{ .Values.webapp.service.ports.targetPort }}
+      nodePort: {{ .Values.webapp.service.ports.nodePort }}
