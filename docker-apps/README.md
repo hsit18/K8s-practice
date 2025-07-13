@@ -30,6 +30,21 @@ docker inspect
 
 # docker volumes
 ## 3 types 
-1. Anonymous volume: managed by docker and created with container start. in DockerFile define command as:  VOLUME [ "/<WORKING_DIR>/<FOLDER_NAME>" ]
-2. Named volume: docker run -v <VOL_NAME>:<CONTAINER_FOLDER_PATH>. Need to remove by docker rm <VOL_NAME> and docker volume prune
+1. Anonymous volume:
+        Managed by docker and created with container start. 
+        In DockerFile define command as:  VOLUME [ "/<WORKING_DIR>/<FOLDER_NAME>" ]
+        Here we dont know the mapped folder location on host machine and name also random text.
+
+2. Named volume: 
+        docker run -v <VOL_NAME>:<CONTAINER_FOLDER_PATH>. 
+        To remove by docker rm <VOL_NAME> OR docker volume prune
+        Here we dont know the mapped folder location on host machine
+        
+
 3. Binding volume: 
+        Here we know the mapped folder location on host machine
+
+### docker vloumes commands
+docker volume ls
+
+docker volume prune

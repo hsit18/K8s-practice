@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+   web:
+      image: nginx:latest
+      ports:
+         - "80:80"
+      volumes:
+         - web-data:/var/www/html
+      networks:
+         - webnet
+
+   database:
+      image: mysql:latest
+      environment:
+         MYSQL_ROOT_PASSWORD: example
+      volumes:
+         - db-data:/var/lib/mysql
+      networks:
+         - webnet
+
+networks:
+   webnet:
+      driver: bridge
+
+volumes:
+   web-data:
+   db-data:
