@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka Producer API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    h1 {
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kafka Producer API Test</h1>
+  
+  <div class="form-group">
+    <label for="topic">Topic:</label>
+    <input type="text" id="topic" value="test-topic" placeholder="Enter Kafka topic">
+  </div>
+  
+  <div class="form-group">
+    <label for="key">Message Key (optional):</label>
+    <input type="text" id="key" placeholder="Enter message key">
+  </div>
+  
+  <div class="form-group">
+    <label for="message">Message (JSON):</label>
+    <textarea id="message" rows="10" placeholder="Enter JSON message">
+{
+  "time": "2025-07-15T12:00:00.000Z",
+  "message": "Hello from API!",
+  "count": 1,
+  "source": "web-form"
+}
+    </textarea>
+  </div>
+  
+  <button id="sendBtn">Send Message</button>
+  
+  <h3>Response:</h3>
+  <pre id="response"></pre>
+  
+  <script>
+    document.getElementById('sendBtn').addEventListener('click', async () => {
+      const topicInput = document.getElementById('topic');
+      const keyInput = document.getElementById('key');
+      const messageInput = document.getElementById('message');
+      const responseEl = document.getElementById('response');
+      
+      try {
+        // Parse the message as JSON
+        const messageData = JSON.parse(messageInput.value);
+        
+        // Prepare the request
+        const requestData = {
+          message: messageData
+        };
+        
+        // Add key if provided
+        if (keyInput.value.trim()) {
+          requestData.key = keyInput.value.trim();
+        }
+        
+        // Make the API request
+        const response = await fetch(`http://localhost:3000/api/topics/${topicInput.value.trim()}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        
+        // Get the response
+        const result = await response.json();
+        
+        // Display the response
+        responseEl.textContent = JSON.stringify(result, null, 2);
+        responseEl.style.color = response.ok ? 'green' : 'red';
+      } catch (error) {
+        responseEl.textContent = `Error: ${error.message}`;
+        responseEl.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
