@@ -3,9 +3,13 @@ import { RdKafka } from '@confluentinc/kafka-javascript';
 
 // Configuration
 const config = {
-  'bootstrap.servers': 'localhost:29092',
+  'bootstrap.servers': '127.0.0.1:29092,127.0.0.1:29093', // Use IPv4 explicitly for both brokers
   'group.id': 'node-consumer-group',
-  'enable.auto.commit': false
+  'enable.auto.commit': false,
+  'session.timeout.ms': 30000,
+  'heartbeat.interval.ms': 10000,
+  'auto.offset.reset': 'earliest',
+  'broker.address.family': 'v4', // Force IPv4
 };
 
 console.log('Creating Kafka consumer...');
@@ -44,6 +48,16 @@ consumer.on('data', (message) => {
 
 consumer.on('event.error', (err) => {
   console.error('Error from consumer:', err);
+  console.error('Error details:', {
+    message: err.message,
+    code: err.code,
+    errno: err.errno,
+    origin: err.origin
+  });
+});
+
+consumer.on('event.log', (log) => {
+  console.log('Consumer log:', log);
 });
 
 consumer.on('disconnected', () => {

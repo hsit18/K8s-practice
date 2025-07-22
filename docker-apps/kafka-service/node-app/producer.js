@@ -1,12 +1,12 @@
 import { RdKafka } from '@confluentinc/kafka-javascript';
 
 const config = {
-  'bootstrap.servers': 'localhost:29092', // Verify this is the correct broker address
+  'bootstrap.servers': '127.0.0.1:29092,127.0.0.1:29093', // Use IPv4 explicitly for both brokers
   'client.id': 'node-kafka-producer',
   'dr_cb': true,
   'socket.keepalive.enable': true,
-  'request.timeout.ms': 30000, // Increase timeout to 30 seconds
-  'message.timeout.ms': 60000  // Message delivery timeout
+  'message.timeout.ms': 60000,  // Message delivery timeout
+  'broker.address.family': 'v4', // Force IPv4
 };
 
 console.log('Creating Kafka producer...');
